@@ -1,4 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt';
 import { PassportStatic, use } from 'passport';
 import { User, UserModel } from '../models';
 
@@ -28,7 +29,7 @@ export const passportInit = (passport: PassportStatic) => {
     
                 // check to see if theres already a user with that email
                 if (user) {
-                    return done(null, false, {message: 'email already taken'});
+                    return done(null, false);
                 } else {
     
                     // if there is no user with that email
@@ -65,7 +66,7 @@ export const passportInit = (passport: PassportStatic) => {
 
             // if no user is found, return the message
             if (!user)
-                return done(null, false); // req.flash is the way to set flashdata using connect-flash
+                return done(null, false);
 
             // if the user is found but the password is wrong
             if (!user.validPassword(password, user.local.password))
@@ -75,4 +76,18 @@ export const passportInit = (passport: PassportStatic) => {
             return done(null, user);
         });
     }))
+
+    use(new JWTstrategy({
+        //secret we used to sign our JWT
+        secretOrKey : 'khwaamlapthiidii',
+        //we expect the user to send the token as a query paramater with the name 'secret_token'
+        jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken()
+      }, async (token, done) => {
+        try {
+          //Pass the user details to the next middleware
+          return done(null, token.user);
+        } catch (error) {
+          done(error);
+        }
+      }));
 }
