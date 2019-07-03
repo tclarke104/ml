@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth/services/token.interceptor';
 import { AuthModule } from './auth/auth.module';
+import { UploadModule } from './upload/upload.module';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { AuthModule } from './auth/auth.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
-    AuthModule
+    AuthModule,
+    UploadModule
   ],
   providers: [
     {

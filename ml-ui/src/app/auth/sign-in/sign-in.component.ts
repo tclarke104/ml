@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-in',
@@ -8,7 +10,7 @@ import { AuthService } from '../services/auth.service';
   <mat-card class="signin-card">
     <form [formGroup]="signInForm" (ngSubmit)="signIn()" class="signin-container">
       <mat-form-field class="signin-field">
-        <input matInput formControlName="email" placeholder="Email">
+        <input matInput formControlName="email" placeholder="Email" type="email">
       </mat-form-field>
       <mat-form-field class="signin-field">
         <input matInput formControlName="password" placeholder="Password" type="password">
@@ -22,7 +24,7 @@ import { AuthService } from '../services/auth.service';
 export class SignInComponent implements OnInit {
   signInForm: FormGroup;
 
-  constructor(private formBuilder: FormBuilder, private auth: AuthService) {
+  constructor(private formBuilder: FormBuilder, private auth: AuthService, private router: Router) {
     this.signInForm = this.formBuilder.group({
       email: ['', Validators.required],
       password: ['', Validators.required],
@@ -35,11 +37,11 @@ export class SignInComponent implements OnInit {
   signIn() {
     if (this.signInForm.valid) {
       this.auth.signIn(this.signInForm.value.email, this.signInForm.value.password).subscribe(
-        (res: {token: string}) => {
+        (res: any) => {
           localStorage.setItem('token', res.token);
-          this.auth.checkAuth();
-        }, err => console.log(err)
-      );
+          this.auth.isAuthorized.next(true);
+          this.router.navigate(['upload']);
+      });
     }
   }
 

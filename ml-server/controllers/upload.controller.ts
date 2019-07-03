@@ -1,12 +1,18 @@
 import { Request, Response } from 'express';
 import { IncomingForm } from 'formidable';
-import { writeFileSync } from 'fs'
 
 export const upload = (req: Request, res: Response) => {
-    const form = new IncomingForm();
-    form.on('file', (field, file) => {
-        writeFileSync('../../files/test.jpeg', file)
-    })
-    form.on('end', () => res.json());
-    form.parse(req);
+    try{
+        const form = new IncomingForm();
+        form.parse(req);
+        form.on('fileBegin', (name, file) => {
+            file.path = '/home/travis/uploads/' + file.name;
+        });
+        form.on('file', (field, file) => {
+            console.log(`uploaded ${file.name}`)
+        })
+        form.on('end', () => res.json());
+    } catch (error){
+        console.warn(error);
+    }
 }

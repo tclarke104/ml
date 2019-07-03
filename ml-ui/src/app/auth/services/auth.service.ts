@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AppSettingsService } from '../../services/app-settings.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
+import * as jwt_decode from 'jwt-decode';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,8 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
   isAuthorized = new BehaviorSubject(false);
 
-  constructor(private http: HttpClient, private appSettings: AppSettingsService) { }
+  constructor(private http: HttpClient, private appSettings: AppSettingsService, private router: Router) {
+  }
 
   signUp(email: string, password: string) {
     return this.http.post(this.appSettings.baseUrl + '/signup', {email, password});
@@ -23,14 +26,26 @@ export class AuthService {
     localStorage.removeItem('token');
   }
 
-  checkAuth() {
-    this.http.get(this.appSettings.baseUrl).subscribe(
-      res => this.isAuthorized.next(true),
-      err => this.isAuthorized.next(false)
-    );
+  setToken(token: string): void {
+    localStorage.setItem('token', token);
   }
 
-  getToken(): string {
-    return localStorage.getItem('token');
+  getTokenExpirationDate(token: string): Date {
+    const decoded = jwt_decode(token);
+
+    if (decoded.exp === undefined) { return null; }
+
+    const date = new Date(0);
+    date.setUTCSeconds(decoded.exp);
+    return date;
+  }
+
+  isTokenExpired(token?: string): boolean {
+    if(!token) token = this.getToken();
+    if(!token) return true;
+
+    const date = this.getTokenExpirationDate(token);
+    if(date === undefined) return false;
+    return !(date.valueOf() > new Date().valueOf());
   }
 }
