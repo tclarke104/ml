@@ -51,7 +51,7 @@ export class SignUpComponent implements OnInit {
         (res: any) => {
           localStorage.setItem('token', res.token);
           this.auth.isAuthorized.next(true);
-          this.router.navigate(['upload']);
+          this.router.navigate(['files']);
       });
     }
   }

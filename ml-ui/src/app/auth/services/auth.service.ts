@@ -12,6 +12,10 @@ export class AuthService {
   isAuthorized = new BehaviorSubject(false);
 
   constructor(private http: HttpClient, private appSettings: AppSettingsService, private router: Router) {
+    const token = this.getToken();
+    if (token) {
+      this.isAuthorized.next(!this.isTokenExpired(token));
+    }
   }
 
   signUp(email: string, password: string) {
@@ -24,10 +28,16 @@ export class AuthService {
 
   signOut() {
     localStorage.removeItem('token');
+    this.isAuthorized.next(false);
+    this.router.navigate(['signin']);
   }
 
   setToken(token: string): void {
     localStorage.setItem('token', token);
+  }
+
+  getToken() {
+    return localStorage.getItem('token');
   }
 
   getTokenExpirationDate(token: string): Date {
@@ -45,7 +55,7 @@ export class AuthService {
     if(!token) return true;
 
     const date = this.getTokenExpirationDate(token);
-    if(date === undefined) return false;
-    return !(date.valueOf() > new Date().valueOf());
+    if(!date) return false;
+    return !(date.getTime() > Date.now())
   }
 }

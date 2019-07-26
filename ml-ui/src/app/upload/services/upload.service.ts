@@ -3,6 +3,7 @@ import { AppSettingsService } from '../../services/app-settings.service';
 import { HttpClient, HttpRequest, HttpEventType, HttpResponse } from '@angular/common/http';
 import { UploadProgress } from '../interfaces/uploadProgress';
 import { Observable, Subject } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,16 @@ export class UploadService {
   url = `${this.appSettings.baseUrl}/upload`;
   constructor(private appSettings: AppSettingsService, private http: HttpClient) { }
 
-  public upload(files: Set<File>): UploadProgress {
+  public upload(fileName, files: Set<File>): UploadProgress {
     // this will be the our resulting map
     const status: { [key: string]: { progress: Observable<number> } } = {};
+    const id = uuid();
 
     files.forEach(file => {
       // create a new multipart-form for every file
       const formData: FormData = new FormData();
+      formData.append('uploadId', id);
+      formData.append('fileName', fileName);
       formData.append('file', file, file.name);
 
       // create a http-post request and pass the form

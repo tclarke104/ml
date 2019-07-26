@@ -4,11 +4,15 @@ import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component';
 import { UploadComponent } from './upload/upload/upload.component';
 import { AuthGuardService } from './guards/auth-guard.service';
+import { FilesContainerComponent } from './files/files-container/files-container.component';
+import { JobsComponent } from './jobs/jobs/jobs.component';
 
 const routes: Routes = [
   {path: 'signin', component: SignInComponent},
   {path: 'signup', component: SignUpComponent},
-  {path: 'upload', component: UploadComponent, canActivate: [AuthGuardService],}
+  {path: 'upload', component: UploadComponent, canActivate: [AuthGuardService]},
+  {path: 'files', component: FilesContainerComponent, canActivate: [AuthGuardService]},
+  {path: 'jobs', component: JobsComponent, canActivate: [AuthGuardService]}
 ];
 
 @NgModule({

@@ -1,17 +1,26 @@
 import { Request, Response } from 'express';
 import { IncomingForm } from 'formidable';
+import path from 'path';
+import { existsSync, mkdirSync }  from 'fs';
+import { UploadModel } from '../models';
 
 export const upload = (req: Request, res: Response) => {
     try{
-        const form = new IncomingForm();
-        form.parse(req);
-        form.on('fileBegin', (name, file) => {
-            file.path = '/home/travis/uploads/' + file.name;
-        });
-        form.on('file', (field, file) => {
-            console.log(`uploaded ${file.name}`)
+        console.log(`uploaded ${req.file.filename}`);
+        let upload = new UploadModel({
+            userId:req.user._id,
+            uploadId: req.body.uploadId,
+            fileName: req.body.fileName,
+            path: req.file.path
         })
-        form.on('end', () => res.json());
+
+        upload.save( 
+            (err, doc) => {
+                if (err) return res.send(500);
+                return res.json();
+            }    
+        );
+
     } catch (error){
         console.warn(error);
     }

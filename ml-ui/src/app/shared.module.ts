@@ -7,7 +7,12 @@ import { MatButtonModule,
          MatToolbarModule,
          MatProgressBarModule,
          MatListModule,
-         MatDialogModule} from '@angular/material';
+         MatDialogModule,
+         MatExpansionModule,
+         MatGridListModule,
+         MatSelectModule,
+         MatTableModule,
+         MatSnackBarModule} from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { AngularFileUploaderModule } from 'angular-file-uploader';
@@ -24,7 +29,12 @@ import { AngularFileUploaderModule } from 'angular-file-uploader';
     ReactiveFormsModule,
     MatToolbarModule,
     HttpClientModule,
-    AngularFileUploaderModule
+    AngularFileUploaderModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatSelectModule,
+    MatTableModule,
+    MatSnackBarModule
   ],
   imports: [
     CommonModule

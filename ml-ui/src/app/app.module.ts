@@ -10,11 +10,13 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './auth/services/token.interceptor';
 import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
+import { FilesModule } from './files/files.module';
+import { JobsModule } from './jobs/jobs.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
@@ -22,7 +24,9 @@ import { UploadModule } from './upload/upload.module';
     BrowserAnimationsModule,
     SharedModule,
     AuthModule,
-    UploadModule
+    UploadModule,
+    FilesModule,
+    JobsModule
   ],
   providers: [
     {

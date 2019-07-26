@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { UploadService } from '../services/upload.service';
 import { forkJoin } from 'rxjs';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-dialog',
@@ -14,6 +15,9 @@ import { forkJoin } from 'rxjs';
       multiple
     />
     <h1 mat-dialog-title>Upload Files</h1>
+    <mat-form-field class="full-width-input">
+      <input matInput [formControl]="fileNameControl" placeholder="FILE NAME">
+    </mat-form-field>
     <button
       [disabled]="uploading || uploadSuccessful"
       mat-raised-button
@@ -22,7 +26,14 @@ import { forkJoin } from 'rxjs';
       (click)="addFiles()">
       Add Files
     </button>
-
+    <button *ngIf="showCancelButton" mat-button mat-dialog-close>Cancel</button>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!canBeClosed"
+      (click)="closeDialog()">
+      {{primaryButtonText}}
+    </button>
     <mat-list>
       <mat-list-item *ngFor="let file of files">
         <h4 mat-line>{{file.name}}</h4>
@@ -33,21 +44,14 @@ import { forkJoin } from 'rxjs';
         ></mat-progress-bar>
       </mat-list-item>
     </mat-list>
-    <button *ngIf="showCancelButton" mat-button mat-dialog-close>Cancel</button>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!canBeClosed"
-      (click)="closeDialog()">
-      {{primaryButtonText}}
-    </button>
   `,
   styleUrls: ['./dialog.component.scss']
 })
 export class DialogComponent implements OnInit {
   @ViewChild('file', {static: false}) file: any;
+  fileNameControl = new FormControl('');
   progress: any;
-  canBeClosed = true;
+  canBeClosed = false;
   primaryButtonText = 'Upload';
   showCancelButton = true;
   uploading = false;
@@ -58,6 +62,9 @@ export class DialogComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<DialogComponent>, public uploadService: UploadService) {}
 
   ngOnInit() {
+    this.fileNameControl.valueChanges.subscribe(value => {
+      this.canBeClosed = value && this.files.size > 0;
+    });
   }
 
   addFiles() {
@@ -66,11 +73,14 @@ export class DialogComponent implements OnInit {
 
   onFilesAdded() {
     const files: { [key: string]: File } = this.file.nativeElement.files;
-    for (let key in files) {
+
+    for (const key in files) {
       if (!isNaN(parseInt(key))) {
         this.files.add(files[key]);
       }
     }
+
+    this.canBeClosed = this.fileNameControl.value && this.files.size > 0;
   }
 
   closeDialog() {
@@ -83,7 +93,7 @@ export class DialogComponent implements OnInit {
     this.uploading = true;
 
     // start the upload and save the progress map
-    this.progress = this.uploadService.upload(this.files);
+    this.progress = this.uploadService.upload(this.fileNameControl.value, this.files);
 
     // convert the progress map into an array
     const allProgressObservables = [];

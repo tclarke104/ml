@@ -6,14 +6,15 @@ import { connect, connection as db} from 'mongoose';
 import passport from 'passport';
 import { passportInit } from './config/passport';
 import cors from 'cors';
+import { AppSettings } from './appSettings';
 
 export const app = express();
-const port: number = 8888;
+const port: number = AppSettings.port;
 passportInit(passport)
 
 app.use(cors());
 // connect to mongo
-connect('mongodb://localhost/ml', {useNewUrlParser: true});
+connect(AppSettings.mongoUrl, {useNewUrlParser: true});
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', ()=>console.log('connected to mongo'));
 app.use(logger('dev'));
