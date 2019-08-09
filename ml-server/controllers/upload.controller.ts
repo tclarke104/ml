@@ -3,6 +3,7 @@ import { IncomingForm } from 'formidable';
 import path from 'path';
 import { existsSync, mkdirSync }  from 'fs';
 import { UploadModel } from '../models';
+import { AppSettings } from '../appSettings';
 
 export const upload = (req: Request, res: Response) => {
     try{
@@ -11,7 +12,8 @@ export const upload = (req: Request, res: Response) => {
             userId:req.user._id,
             uploadId: req.body.uploadId,
             fileName: req.body.fileName,
-            path: req.file.path
+            path: req.file.path,
+            uploadTime: Date.now()
         })
 
         upload.save( 

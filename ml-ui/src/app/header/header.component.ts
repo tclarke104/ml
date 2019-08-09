@@ -11,6 +11,7 @@ import { AuthService } from '../auth/services/auth.service';
     <button mat-button *ngIf="!isAuthorized" [routerLink]="['signin']">SIGN IN</button>
     <button mat-button *ngIf="isAuthorized"  [routerLink]="['files']">FILES</button>
     <button mat-button *ngIf="isAuthorized"  [routerLink]="['jobs']">JOBS</button>
+    <button mat-button *ngIf="isAuthorized"  [routerLink]="['train']">TRAIN</button>
     <button mat-button *ngIf="isAuthorized" (click)="signOut()">SIGN OUT</button>
     </mat-toolbar>
   `,

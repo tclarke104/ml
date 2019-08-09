@@ -16,6 +16,10 @@ import { ScheduleDialogComponent } from '../schedule-dialog/schedule-dialog.comp
         <th mat-header-cell *matHeaderCellDef> File Name </th>
         <td mat-cell *matCellDef="let element"> {{element.fileName}} </td>
       </ng-container>
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef> Upload Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.uploadTime | date}} </td>
+      </ng-container>
 
       <ng-container matColumnDef="schedule">
         <th mat-header-cell *matHeaderCellDef> Schedule Job </th>
@@ -34,7 +38,7 @@ import { ScheduleDialogComponent } from '../schedule-dialog/schedule-dialog.comp
 })
 export class FilesContainerComponent implements OnInit {
   files$ = this.fileService.getFiles();
-  displayedColumns = ['id', 'name', 'schedule'];
+  displayedColumns = ['id', 'name', 'time', 'schedule'];
 
   constructor(private fileService: FilesService, public dialog: MatDialog) { }
 

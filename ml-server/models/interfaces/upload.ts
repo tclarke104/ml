@@ -5,4 +5,5 @@ export interface Upload extends Document {
     uploadId: string;
     fileName: string;
     path: string;
+    uploadTime: number;
 }

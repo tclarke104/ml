@@ -12,6 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { UploadModule } from './upload/upload.module';
 import { FilesModule } from './files/files.module';
 import { JobsModule } from './jobs/jobs.module';
+import { TrainModule } from './train/train.module';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { JobsModule } from './jobs/jobs.module';
     AuthModule,
     UploadModule,
     FilesModule,
-    JobsModule
+    JobsModule,
+    TrainModule
   ],
   providers: [
     {

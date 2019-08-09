@@ -6,6 +6,7 @@ export interface User extends Document {
         password: string;
         name: string;
     }
+    socketIds: [Number];
     validPassword(password: string, localPassword: string): boolean,
     generateHash(password: string): string
 }

@@ -4,6 +4,7 @@ import { AppSettingsService } from '../../services/app-settings.service';
 import { BehaviorSubject, of } from 'rxjs';
 import * as jwt_decode from 'jwt-decode';
 import { Router } from '@angular/router';
+import { SocketService } from 'src/app/services/socket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,10 +12,13 @@ import { Router } from '@angular/router';
 export class AuthService {
   isAuthorized = new BehaviorSubject(false);
 
-  constructor(private http: HttpClient, private appSettings: AppSettingsService, private router: Router) {
+  constructor(private http: HttpClient, private appSettings: AppSettingsService, private router: Router, private socket: SocketService) {
     const token = this.getToken();
-    if (token) {
-      this.isAuthorized.next(!this.isTokenExpired(token));
+    if (token && !this.isTokenExpired(token)) {
+      this.isAuthorized.next(true);
+      this.socket.initSocket(token);
+    } else {
+      this.isAuthorized.next(false);
     }
   }
 
@@ -56,6 +60,6 @@ export class AuthService {
 
     const date = this.getTokenExpirationDate(token);
     if(!date) return false;
-    return !(date.getTime() > Date.now())
+    return !(date.getTime() > Date.now());
   }
 }

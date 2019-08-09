@@ -37,7 +37,7 @@ import { JobViewModel } from '../../../../../common';
 })
 export class JobsComponent implements OnInit {
   displayedColumns = ['jobId', 'file', 'status', 'diagnosis'];
-  jobs$: Observable<JobViewModel> = this.jobsService.getJobs();
+  jobs$: Observable<JobViewModel[]> = this.jobsService.getJobs();
 
   constructor(private jobsService: JobsService) { }
 

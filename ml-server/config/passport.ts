@@ -2,6 +2,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as JWTstrategy, ExtractJwt } from 'passport-jwt';
 import { PassportStatic, use } from 'passport';
 import { User, UserModel } from '../models';
+import { AppSettings } from '../appSettings';
 
 export const passportInit = (passport: PassportStatic) => {
     passport.serializeUser((user: User, done) => {
@@ -79,8 +80,8 @@ export const passportInit = (passport: PassportStatic) => {
 
     use(new JWTstrategy({
         //secret we used to sign our JWT
-        secretOrKey : 'khwaamlapthiidii',
-        //we expect the user to send the token as a query paramater with the name 'secret_token'
+        secretOrKey : AppSettings.secret,
+        //we expect the user to send the token as a query paramater with the name 'token'
         jwtFromRequest : ExtractJwt.fromAuthHeaderAsBearerToken()
       }, async (token, done) => {
         try {

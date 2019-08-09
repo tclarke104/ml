@@ -7,6 +7,7 @@ import { JobStatus } from '../../common/enum';
 import { AppSettings } from '../appSettings';
 import { UploadModel } from '../models';
 import { JobViewModel } from '../../common';
+import { EpochInfoModel } from '../models/epochInfo';
 
 var celery = require('node-celery'),
 	client = celery.createClient({
@@ -45,16 +46,23 @@ export const scheduleJob = async (req: Request, res: Response) => {
         });
         let result = await job.save();
 
-        client.call('eval_job.evaluate', [result.networkId, result.uploadId, result._id]);
+        let evaluation = client.call('eval_job.evaluate', [result.networkId, result.uploadId, result._id]);
+
+        evaluation.on('error', async(data:any) => {
+            NetworkModel.updateOne({'_id': result._id}, {status: JobStatus.FAILED})
+        })
+        evaluation.on('ready', async (data: any) => {
+            let jobs = await getJobViewModels(req.user._id)
+            res.locals.socketio.to(req.user._id).emit('jobs', jobs);
+        })
         res.json({jobId: result._id});
     } else {
         throw new Error('proposed network does not exist')
     }
-
 }
 
-export const getJobs = async (req: Request, res: Response) => {
-    let jobs = await JobModel.find({'userId': req.user._id});
+export const getJobViewModels = async (userId: string): Promise<JobViewModel[]> => {
+    let jobs = await JobModel.find({'userId': userId});
     let promises = _.map(jobs, async job => {
         let fileName = await UploadModel.findOne({'uploadId': job.uploadId});
         return {
@@ -65,5 +73,10 @@ export const getJobs = async (req: Request, res: Response) => {
         }
     });
     let jobViewModels = await Promise.all(promises);
+    return jobViewModels;
+}
+
+export const getJobs = async (req: Request, res: Response) => {
+    let jobViewModels = await getJobViewModels(req.user._id);
     res.json(jobViewModels);
 }
