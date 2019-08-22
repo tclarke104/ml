@@ -49,7 +49,21 @@ import { MatDialogRef } from '@angular/material';
   styleUrls: ['./train-dialog.component.scss']
 })
 export class TrainDialogComponent implements OnInit {
-  networks = ['resnet18', 'resnet34'];
+  networks = [
+    'resnet18',
+    'resnet34',
+    'resnet50',
+    'resnet101',
+    'resnet152',
+    'resnet200',
+    'resnext50',
+    'resnext101',
+    'wide_resnet',
+    'densenet121',
+    'densenet169',
+    'densenet201',
+    'densenet264'
+  ];
   devices = [0, 1];
   classes = [];
   classes$ = this.trainService.getClasses();
